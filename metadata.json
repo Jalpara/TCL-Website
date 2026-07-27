@@ -1,0 +1,6 @@
+{
+  "name": "The Connecting Link",
+  "description": "Connecting People. Creating Impact. Landing page for NGO.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
