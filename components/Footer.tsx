@@ -11,7 +11,7 @@ export default function Footer() {
           
           <div className="lg:col-span-4">
              <div className="flex items-center gap-3 mb-6">
-                <Image src="/assets/logo.png" alt="The Connecting Link Logo" width={300} height={100} className="h-20 md:h-20 w-auto invert grayscale" referrerPolicy="no-referrer" />
+                <Image src="/assets/logo.png" alt="The Connecting Link Logo" width={300} height={100} className="h-20 md:h-20 w-auto invert brightness-[6] grayscale" referrerPolicy="no-referrer" />
              </div>
              <p className="text-gray-400 text-sm leading-relaxed mb-8 max-w-sm">
                Connecting people. Creating impact.<br/>
