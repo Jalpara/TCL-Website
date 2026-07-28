@@ -24,7 +24,7 @@ export default function Page() {
 
 function Hero() {
   return (
-    <section className="relative overflow-hidden pt-12 pb-20 md:pt-20 md:pb-32 px-6">
+    <section className="relative overflow-hidden pt-12 pb-20 md:pt-20 md:pb-32 px-6 bg-[#fff]">
       <div className="max-w-7xl mx-auto flex flex-col lg:flex-row items-center gap-12">
         {/* Left Content */}
         <div className="flex-1 text-center lg:text-left z-10">
