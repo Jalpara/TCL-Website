@@ -2,8 +2,35 @@ import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Instagram, Facebook, Linkedin, Youtube, Mail, Phone, ArrowRight } from 'lucide-react';
+import { getPayload } from 'payload';
+import configPromise from '@/payload.config';
 
-export default function Footer() {
+export default async function Footer() {
+  const payload = await getPayload({ config: configPromise });
+  const siteConfig = await payload.findGlobal({ slug: 'site-config' }) as any;
+
+  const quickLinks = siteConfig?.quickLinks || [
+    { label: 'About Us', url: '/about' },
+    { label: 'Initiatives', url: '/initiatives' },
+    { label: 'Impact', url: '/impact' },
+    { label: 'Events', url: '/events' },
+    { label: 'Get Involved', url: '/get-involved' },
+  ];
+
+  const resourceLinks = siteConfig?.resourceLinks || [
+    { label: 'Stories', url: '/stories' },
+    { label: 'Become A Link', url: '/get-involved' },
+    { label: 'About Us', url: '/about' },
+  ];
+
+  const socials = siteConfig?.socialLinks || {};
+  const email = siteConfig?.contactEmail || 'info@theconnectinglink.org';
+  const phone = siteConfig?.contactPhone || '+91 98765 43210';
+  const copyright = siteConfig?.copyrightText || '© 2026 The Connecting Link. All rights reserved.';
+  const newsletterText = siteConfig?.newsletterText || 'Subscribe to our newsletter and never miss an update.';
+  const tagline = siteConfig?.tagline || 'Connecting people. Creating impact.';
+  const footerSubtext = siteConfig?.footerSubtext || 'Building a better tomorrow, together.';
+
   return (
     <footer className="bg-brand-dark text-white pt-20 pb-8 px-6">
       <div className="max-w-7xl mx-auto">
@@ -14,40 +41,38 @@ export default function Footer() {
                 <Image src="/assets/WhiteLogo.png" alt="The Connecting Link Logo" width={300} height={100} className="h-20 md:h-20 w-auto" referrerPolicy="no-referrer" />
              </div>
              <p className="text-gray-400 text-sm leading-relaxed mb-8 max-w-sm">
-               Connecting people. Creating impact.<br/>
-               Building a better tomorrow, together.
+               {tagline}<br/>
+               {footerSubtext}
              </p>
              <div className="flex items-center gap-4 text-gray-400">
-               <Link href="#" className="hover:text-white transition-colors"><Instagram size={20} /></Link>
-               <Link href="#" className="hover:text-white transition-colors"><Facebook size={20} /></Link>
-               <Link href="#" className="hover:text-white transition-colors"><Linkedin size={20} /></Link>
-               <Link href="#" className="hover:text-white transition-colors"><Youtube size={20} /></Link>
+               <Link href={socials.instagram || '#'} className="hover:text-white transition-colors"><Instagram size={20} /></Link>
+               <Link href={socials.facebook || '#'} className="hover:text-white transition-colors"><Facebook size={20} /></Link>
+               <Link href={socials.linkedin || '#'} className="hover:text-white transition-colors"><Linkedin size={20} /></Link>
+               <Link href={socials.youtube || '#'} className="hover:text-white transition-colors"><Youtube size={20} /></Link>
              </div>
           </div>
 
           <div className="lg:col-span-2">
             <h4 className="font-serif font-semibold text-lg text-white mb-6">Quick Links</h4>
             <ul className="flex flex-col gap-3 text-sm text-gray-400">
-              <li><Link href="/about" className="hover:text-white transition-colors">About Us</Link></li>
-              <li><Link href="/initiatives" className="hover:text-white transition-colors">Initiatives</Link></li>
-              <li><Link href="/impact" className="hover:text-white transition-colors">Impact</Link></li>
-              <li><Link href="/events" className="hover:text-white transition-colors">Events</Link></li>
-              <li><Link href="/get-involved" className="hover:text-white transition-colors">Get Involved</Link></li>
+              {quickLinks.map((link: any, idx: number) => (
+                <li key={idx}><Link href={link.url} className="hover:text-white transition-colors">{link.label}</Link></li>
+              ))}
             </ul>
           </div>
 
           <div className="lg:col-span-2">
             <h4 className="font-serif font-semibold text-lg text-white mb-6">Resources</h4>
             <ul className="flex flex-col gap-3 text-sm text-gray-400">
-              <li><Link href="/stories" className="hover:text-white transition-colors">Stories</Link></li>
-              <li><Link href="/get-involved" className="hover:text-white transition-colors">Become A Link</Link></li>
-              <li><Link href="/about" className="hover:text-white transition-colors">About Us</Link></li>
+              {resourceLinks.map((link: any, idx: number) => (
+                <li key={idx}><Link href={link.url} className="hover:text-white transition-colors">{link.label}</Link></li>
+              ))}
             </ul>
           </div>
 
           <div className="lg:col-span-4">
              <h4 className="font-serif font-semibold text-lg text-white mb-6">Stay Connected</h4>
-             <p className="text-gray-400 text-sm mb-4">Subscribe to our newsletter and never miss an update.</p>
+             <p className="text-gray-400 text-sm mb-4">{newsletterText}</p>
              <div className="relative mb-8">
                <input 
                  type="email" 
@@ -60,11 +85,11 @@ export default function Footer() {
              </div>
              
              <div className="flex flex-col gap-3 text-sm text-gray-400">
-               <a href="mailto:info@theconnectinglink.org" className="flex items-center gap-3 hover:text-white transition-colors">
-                 <Mail size={16} /> info@theconnectinglink.org
+               <a href={`mailto:${email}`} className="flex items-center gap-3 hover:text-white transition-colors">
+                 <Mail size={16} /> {email}
                </a>
-               <a href="tel:+919876543210" className="flex items-center gap-3 hover:text-white transition-colors">
-                 <Phone size={16} /> +91 98765 43210
+               <a href={`tel:${phone.replace(/\s/g, '')}`} className="flex items-center gap-3 hover:text-white transition-colors">
+                 <Phone size={16} /> {phone}
                </a>
              </div>
           </div>
@@ -72,7 +97,7 @@ export default function Footer() {
         </div>
 
         <div className="border-t border-white/10 pt-8 mt-8 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-gray-500">
-          <p>© 2026 The Connecting Link. All rights reserved.</p>
+          <p>{copyright}</p>
           <div className="flex items-center gap-6">
             <Link href="/privacy" className="hover:text-gray-300 transition-colors">Privacy Policy</Link>
             <span className="w-px h-3 bg-white/10" />

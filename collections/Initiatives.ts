@@ -26,16 +26,64 @@ export const Initiatives: CollectionConfig = {
       required: true,
     },
     {
+      name: 'subtitle',
+      type: 'text',
+      label: 'Subtitle (e.g. "Food Donation Drives")',
+    },
+    {
+      name: 'longDescription',
+      type: 'textarea',
+      label: 'Long Description (for listing page)',
+    },
+    {
       name: 'fullDescription',
       type: 'richText',
     },
     {
       name: 'icon',
-      type: 'text', // using text to store lucide icon name for simplicity, or we can use media later
+      type: 'text',
     },
     {
       name: 'themeColor',
-      type: 'text', // e.g. "orange", "green"
+      type: 'text',
+    },
+    {
+      name: 'imageUrl',
+      type: 'text',
+      label: 'Image URL (for listing page)',
+    },
+    {
+      name: 'challenge',
+      type: 'textarea',
+      label: 'The Challenge',
+    },
+    {
+      name: 'activities',
+      type: 'array',
+      label: 'Activities',
+      fields: [
+        { name: 'title', type: 'text', required: true },
+        { name: 'description', type: 'textarea', required: true }
+      ]
+    },
+    {
+      name: 'methodology',
+      type: 'array',
+      label: 'Methodology Steps',
+      fields: [
+        { name: 'stepNumber', type: 'text', required: true },
+        { name: 'title', type: 'text', required: true },
+        { name: 'description', type: 'textarea', required: true }
+      ]
+    },
+    {
+      name: 'impactNumbers',
+      type: 'array',
+      label: 'Impact Statistics',
+      fields: [
+        { name: 'value', type: 'text', required: true },
+        { name: 'label', type: 'text', required: true }
+      ]
     }
   ],
 };

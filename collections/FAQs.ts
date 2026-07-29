@@ -16,8 +16,14 @@ export const FAQs: CollectionConfig = {
     },
     {
       name: 'answer',
-      type: 'richText',
+      type: 'textarea',
       required: true,
+    },
+    {
+      name: 'order',
+      type: 'number',
+      label: 'Display Order',
+      defaultValue: 0,
     },
     {
       name: 'relatedInitiative',

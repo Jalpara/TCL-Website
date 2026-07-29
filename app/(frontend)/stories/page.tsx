@@ -2,52 +2,31 @@ import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
+import { getPayload } from 'payload';
+import configPromise from '@/payload.config';
 
-export default function StoriesPage() {
-  const stories = [
-    {
-      id: 1,
-      img: 'https://picsum.photos/seed/meal1/600/400',
-      tag: 'The Shared Plate', tagColor: 'bg-orange-500',
-      title: 'A warm meal, a brighter day',
-      desc: 'How a simple meal brought smiles to a community.'
-    },
-    {
-      id: 2,
-      img: 'https://picsum.photos/seed/quiet1/600/400',
-      tag: 'The Better Choice', tagColor: 'bg-purple-500',
-      title: 'From silence to strength',
-      desc: 'A story of healing, hope and fighting addiction.'
-    },
-    {
-      id: 3,
-      img: 'https://picsum.photos/seed/earth1/600/400',
-      tag: 'The Common Ground', tagColor: 'bg-green-500',
-      title: 'Planting a greener future',
-      desc: 'Students came together to revive their local forest patch.'
-    },
-    {
-      id: 4,
-      img: 'https://picsum.photos/seed/edu1/600/400',
-      tag: 'The Learning Circle', tagColor: 'bg-blue-500',
-      title: 'Education changes everything',
-      desc: 'Supporting a child today to build a better tomorrow.'
-    },
-    {
-      id: 5,
-      img: 'https://picsum.photos/seed/meal2/600/400',
-      tag: 'The Shared Plate', tagColor: 'bg-orange-500',
-      title: 'Festival of giving',
-      desc: 'Sharing festive joy through massive food drives in the city.'
-    },
-    {
-      id: 6,
-      img: 'https://picsum.photos/seed/edu3/600/400',
-      tag: 'The Learning Circle', tagColor: 'bg-blue-500',
-      title: 'A new library for the village',
-      desc: 'How 500 books transformed the weekends for rural children.'
-    }
-  ];
+export default async function StoriesPage() {
+  const payload = await getPayload({ config: configPromise });
+  const { docs: fetchedStories } = await payload.find({ collection: 'stories' });
+
+  const stories = fetchedStories.map((story: any) => {
+    const initTitle = story.initiative?.title || 'Story';
+    const initColor = story.initiative?.themeColor || 'blue';
+
+    let tagColor = 'bg-blue-500';
+    if (initColor === 'orange') tagColor = 'bg-orange-500';
+    else if (initColor === 'purple') tagColor = 'bg-purple-500';
+    else if (initColor === 'green') tagColor = 'bg-green-500';
+
+    return {
+      img: story.featuredImage?.url || story.imageUrl || 'https://picsum.photos/seed/meal1/600/400',
+      tag: initTitle,
+      tagColor,
+      title: story.title,
+      slug: story.slug,
+      desc: story.summary || 'A beautiful story of impact.',
+    };
+  });
 
   return (
     <div className="py-12 px-6">
@@ -71,7 +50,7 @@ export default function StoriesPage() {
                 </span>
                 <h4 className="font-serif font-bold text-2xl mb-3 text-gray-900 leading-tight group-hover:text-brand-dark transition-colors">{story.title}</h4>
                 <p className="text-gray-500 font-medium leading-relaxed mb-8 flex-1">{story.desc}</p>
-                <Link href={`/stories/${story.id}`} className="font-bold text-sm text-brand-dark flex items-center gap-1 hover:opacity-80">
+                <Link href={`/stories/${story.slug}`} className="font-bold text-sm text-brand-dark flex items-center gap-1 hover:opacity-80">
                   Read full story <ArrowRight size={16} />
                 </Link>
               </div>

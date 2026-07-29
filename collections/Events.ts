@@ -35,6 +35,14 @@ export const Events: CollectionConfig = {
       relationTo: 'locations',
     },
     {
+      name: 'locationName',
+      type: 'text',
+      label: 'Location Name (simple text)',
+      admin: {
+        description: 'Simple location name for display. Used when no location relationship is set.',
+      },
+    },
+    {
       name: 'initiative',
       type: 'relationship',
       relationTo: 'initiatives',
@@ -47,6 +55,11 @@ export const Events: CollectionConfig = {
       name: 'organizer',
       type: 'relationship',
       relationTo: 'people',
+    },
+    {
+      name: 'capacity',
+      type: 'number',
+      label: 'Volunteer Capacity',
     }
   ],
 };

@@ -35,6 +35,14 @@ export const Stories: CollectionConfig = {
       relationTo: 'media',
     },
     {
+      name: 'imageUrl',
+      type: 'text',
+      label: 'Image URL (fallback)',
+      admin: {
+        description: 'Used when no uploaded featured image is set.',
+      },
+    },
+    {
       name: 'initiative',
       type: 'relationship',
       relationTo: 'initiatives',

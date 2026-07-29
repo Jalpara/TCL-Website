@@ -16,11 +16,12 @@ import { Partners } from './collections/Partners';
 import { Metrics } from './collections/Metrics';
 import { Categories } from './collections/Categories';
 import { FAQs } from './collections/FAQs';
-import { Pages } from './collections/Pages';
 
 import { SiteConfig } from './globals/SiteConfig';
-import { Navigation } from './globals/Navigation';
-import { Footer } from './globals/Footer';
+import { HomePage } from './globals/HomePage';
+import { AboutPage } from './globals/AboutPage';
+import { PrivacyPolicy } from './globals/PrivacyPolicy';
+import { TermsConditions } from './globals/TermsConditions';
 
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
@@ -43,13 +44,14 @@ export default buildConfig({
         Partners,
         Metrics,
         Categories,
-        FAQs,
-        Pages
+        FAQs
     ],
     globals: [
         SiteConfig,
-        Navigation,
-        Footer
+        HomePage,
+        AboutPage,
+        PrivacyPolicy,
+        TermsConditions,
     ],
     editor: lexicalEditor(),
     secret: process.env.PAYLOAD_SECRET || '',

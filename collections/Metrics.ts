@@ -24,6 +24,28 @@ export const Metrics: CollectionConfig = {
       type: 'text',
     },
     {
+      name: 'page',
+      type: 'select',
+      label: 'Display On Page',
+      options: [
+        { label: 'Home', value: 'home' },
+        { label: 'Impact', value: 'impact' },
+      ],
+      defaultValue: 'home',
+      required: true,
+    },
+    {
+      name: 'order',
+      type: 'number',
+      label: 'Display Order',
+      defaultValue: 0,
+    },
+    {
+      name: 'color',
+      type: 'text',
+      label: 'Icon Color (for impact page)',
+    },
+    {
       name: 'initiative',
       type: 'relationship',
       relationTo: 'initiatives',

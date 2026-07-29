@@ -6,14 +6,15 @@ import { ArrowLeft, CalendarPlus, MapPin, Clock, Users, ArrowRight } from 'lucid
 import { getPayload } from 'payload';
 import configPromise from '@/payload.config';
 
-export default async function EventDetailPage({ params }: { params: { slug: string } }) {
+export default async function EventDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const payload = await getPayload({ config: configPromise });
+  const resolvedParams = await params;
 
   const { docs } = await payload.find({
     collection: 'events',
     where: {
       slug: {
-        equals: params.slug,
+        equals: resolvedParams.slug,
       },
     },
   });
@@ -70,7 +71,9 @@ export default async function EventDetailPage({ params }: { params: { slug: stri
                     <div className="w-12 h-12 bg-white text-orange-500 rounded-xl flex items-center justify-center shadow-sm"><Users size={24} /></div>
                     <div>
                       <h4 className="font-bold text-gray-900 mb-1">Capacity</h4>
-                      <p className="text-sm font-medium text-gray-600 leading-relaxed">Volunteers Needed</p>
+                      <p className="text-sm font-medium text-gray-600 leading-relaxed">
+                        {event.capacity ? `${event.capacity} Volunteers Needed` : 'Open for All'}
+                      </p>
                     </div>
                  </div>
               </div>

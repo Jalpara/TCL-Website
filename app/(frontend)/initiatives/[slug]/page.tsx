@@ -6,14 +6,15 @@ import { ArrowLeft, ArrowRight, Activity, Users, HeartHandshake, Building, Hands
 import { getPayload } from 'payload';
 import configPromise from '@/payload.config';
 
-export default async function InitiativeDetailPage({ params }: { params: { slug: string } }) {
+export default async function InitiativeDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const payload = await getPayload({ config: configPromise });
+  const resolvedParams = await params;
 
   const { docs } = await payload.find({
     collection: 'initiatives',
     where: {
       slug: {
-        equals: params.slug,
+        equals: resolvedParams.slug,
       },
     },
   });
@@ -68,31 +69,79 @@ export default async function InitiativeDetailPage({ params }: { params: { slug:
         <div className="max-w-4xl mx-auto text-center">
           <span className={`text-sm font-bold tracking-widest uppercase mb-4 block ${tagColorText}`}>Why This Matters</span>
           <h2 className="font-serif text-3xl md:text-5xl font-bold text-gray-900 mb-8">The Problem We&apos;re Solving</h2>
-          <div className="text-xl md:text-2xl text-gray-600 leading-relaxed font-medium" dangerouslySetInnerHTML={{ __html: initiative.description_html || initiative.shortDescription }} />
+          {initiative.challenge ? (
+            <p className="text-xl md:text-2xl text-gray-600 leading-relaxed font-medium">{initiative.challenge}</p>
+          ) : (
+            <div className="text-xl md:text-2xl text-gray-600 leading-relaxed font-medium" dangerouslySetInnerHTML={{ __html: initiative.description_html || initiative.shortDescription }} />
+          )}
         </div>
       </section>
 
       {/* 03 WHAT WE DO */}
-      {/* Keeping some static filler for the layout if dynamic data isn't full enough yet */}
-      <section className="py-24 px-6 bg-gray-50 border-y border-gray-100">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <span className={`text-sm font-bold tracking-widest uppercase mb-4 block ${tagColorText}`}>What We Do</span>
-            <h2 className="font-serif text-3xl md:text-5xl font-bold text-gray-900">Our Activities</h2>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {[1, 2, 3].map((_, idx) => (
-              <div key={idx} className="bg-white p-8 md:p-10 rounded-[2rem] border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
-                <div className={`w-14 h-14 rounded-2xl flex items-center justify-center mb-6 bg-gray-50 ${tagColorText}`}>
-                  <Activity size={28} />
+      {initiative.activities && initiative.activities.length > 0 && (
+        <section className="py-24 px-6 bg-gray-50 border-y border-gray-100">
+          <div className="max-w-7xl mx-auto">
+            <div className="text-center mb-16">
+              <span className={`text-sm font-bold tracking-widest uppercase mb-4 block ${tagColorText}`}>What We Do</span>
+              <h2 className="font-serif text-3xl md:text-5xl font-bold text-gray-900">Our Activities</h2>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {initiative.activities.map((activity: any, idx: number) => (
+                <div key={idx} className="bg-white p-8 md:p-10 rounded-[2rem] border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
+                  <div className={`w-14 h-14 rounded-2xl flex items-center justify-center mb-6 bg-gray-50 ${tagColorText}`}>
+                    <Activity size={28} />
+                  </div>
+                  <h3 className="font-serif text-2xl font-bold text-gray-900 mb-4">{activity.title}</h3>
+                  <p className="text-gray-600 font-medium leading-relaxed">{activity.description}</p>
                 </div>
-                <h3 className="font-serif text-2xl font-bold text-gray-900 mb-4">Core Activity {idx + 1}</h3>
-                <p className="text-gray-600 font-medium leading-relaxed">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore.</p>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
+
+      {/* 04 METHODOLOGY */}
+      {initiative.methodology && initiative.methodology.length > 0 && (
+        <section className="py-24 px-6 bg-white border-b border-gray-100">
+          <div className="max-w-7xl mx-auto">
+            <div className="text-center mb-16">
+              <span className={`text-sm font-bold tracking-widest uppercase mb-4 block ${tagColorText}`}>How We Work</span>
+              <h2 className="font-serif text-3xl md:text-5xl font-bold text-gray-900">Our Methodology</h2>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+              {initiative.methodology.map((step: any, idx: number) => (
+                <div key={idx} className="relative">
+                  {idx < initiative.methodology.length - 1 && (
+                    <div className="hidden lg:block absolute top-10 left-[60%] w-full h-[2px] bg-gray-100" />
+                  )}
+                  <div className={`w-20 h-20 rounded-full flex items-center justify-center text-3xl font-serif font-bold text-white mb-6 relative z-10 ${tagColor}`}>
+                    {step.stepNumber}
+                  </div>
+                  <h3 className="font-serif text-2xl font-bold text-gray-900 mb-3">{step.title}</h3>
+                  <p className="text-gray-600 font-medium leading-relaxed">{step.description}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* 05 IMPACT NUMBERS */}
+      {initiative.impactNumbers && initiative.impactNumbers.length > 0 && (
+        <section className="py-24 px-6 bg-gray-900 text-white text-center">
+          <div className="max-w-7xl mx-auto">
+            <h2 className="font-serif text-3xl md:text-5xl font-bold mb-16">Our Impact So Far</h2>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+              {initiative.impactNumbers.map((stat: any, idx: number) => (
+                <div key={idx} className="flex flex-col items-center">
+                  <div className={`text-4xl md:text-6xl font-bold mb-2 ${tagColorText}`}>{stat.value}</div>
+                  <div className="text-sm md:text-base font-bold text-gray-400 uppercase tracking-widest">{stat.label}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* 08 YOU CAN BE THE LINK */}
       <section className="py-24 px-6 bg-gray-50">

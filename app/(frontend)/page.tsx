@@ -8,41 +8,54 @@ import {
 import { getPayload } from 'payload';
 import configPromise from '@/payload.config';
 
-export default function Page() {
+const iconMap: Record<string, any> = {
+  Leaf, Users, Handshake, Heart, Search, Utensils, BookOpen, HeartHandshake, Shield, Clock, TreePine,
+};
+
+export default async function Page() {
+  const payload = await getPayload({ config: configPromise });
+  const homePage = await payload.findGlobal({ slug: 'home-page' }) as any;
+
   return (
     <div className="font-sans text-gray-800">
-      <Hero />
-      <WhatIs />
-      <HowItWorks />
-      <Initiatives />
-      <Impact />
-      <Stories />
-      <Events />
-      <FAQ />
-      <CtaSection />
+      <Hero data={homePage.hero} />
+      <WhatIs data={homePage.whatIs} />
+      <HowItWorks data={homePage.howItWorks} />
+      <Initiatives title={homePage.initiativesSectionTitle} />
+      <Impact data={homePage.impactSection} />
+      <Stories title={homePage.storiesSectionTitle} />
+      <Events title={homePage.eventsSectionTitle} />
+      <FAQ data={homePage.faqSection} />
+      <CtaSection data={homePage.ctaSection} />
     </div>
   );
 }
 
-function Hero() {
+function Hero({ data }: { data: any }) {
+  const lines = (data?.headline || 'Connecting People.\nCreating Impact.').split('\n');
+
   return (
     <section className="relative overflow-hidden pt-12 pb-20 md:pt-20 md:pb-32 px-6 bg-[#fff]">
       <div className="max-w-7xl mx-auto flex flex-col lg:flex-row items-center gap-12">
         {/* Left Content */}
         <div className="flex-1 text-center lg:text-left z-10">
           <h1 className="font-serif text-5xl md:text-6xl lg:text-7xl font-bold text-gray-900 leading-[1.1] mb-6">
-            Connecting People.<br />Creating Impact.
+            {lines.map((line: string, i: number) => (
+              <React.Fragment key={i}>
+                {line}{i < lines.length - 1 && <br />}
+              </React.Fragment>
+            ))}
           </h1>
           <p className="text-lg md:text-xl text-gray-600 mb-10 max-w-2xl mx-auto lg:mx-0 leading-relaxed">
-            We connect individuals, communities, volunteers, organisations and changemakers to create meaningful social impact.
+            {data?.subheadline || 'We connect individuals, communities, volunteers, organisations and changemakers to create meaningful social impact.'}
           </p>
           
           <div className="flex flex-col sm:flex-row items-center gap-4 justify-center lg:justify-start mb-10">
-            <Link href="/initiatives" className="bg-brand-dark text-white px-8 py-3.5 rounded-full font-bold hover:bg-gray-800 transition-colors flex items-center gap-2 w-full sm:w-auto justify-center">
-              Explore Initiatives <ArrowRight size={18} />
+            <Link href={data?.primaryCta?.url || '/initiatives'} className="bg-brand-dark text-white px-8 py-3.5 rounded-full font-bold hover:bg-gray-800 transition-colors flex items-center gap-2 w-full sm:w-auto justify-center">
+              {data?.primaryCta?.label || 'Explore Initiatives'} <ArrowRight size={18} />
             </Link>
-            <Link href="/get-involved" className="bg-transparent border border-gray-300 text-gray-800 px-8 py-3.5 rounded-full font-bold hover:bg-gray-50 transition-colors w-full sm:w-auto text-center">
-              Become a Connecting Link
+            <Link href={data?.secondaryCta?.url || '/get-involved'} className="bg-transparent border border-gray-300 text-gray-800 px-8 py-3.5 rounded-full font-bold hover:bg-gray-50 transition-colors w-full sm:w-auto text-center">
+              {data?.secondaryCta?.label || 'Become a Connecting Link'}
             </Link>
           </div>
           
@@ -70,49 +83,40 @@ function Hero() {
   );
 }
 
-function WhatIs() {
+function WhatIs({ data }: { data: any }) {
+  const pillars = data?.pillars || [];
+
   return (
     <section className="py-20 bg-[#FDFDFD] border-t border-gray-100 px-6">
       <div className="max-w-7xl mx-auto">
-        <h2 className="text-center font-serif text-3xl md:text-4xl font-bold mb-16">What is The Connecting Link?</h2>
+        <h2 className="text-center font-serif text-3xl md:text-4xl font-bold mb-16">{data?.title || 'What is The Connecting Link?'}</h2>
         
         <div className="flex flex-col lg:flex-row items-center justify-between gap-12">
           {/* Process Diagram */}
           <div className="flex-1 relative w-full flex flex-col md:flex-row items-start justify-between gap-8 md:gap-4">
             <div className="hidden md:block absolute top-[48px] left-16 right-16 border-t-2 border-brand-dark/20 z-0" />
             
-            <div className="relative z-10 flex flex-col items-center text-center flex-1 bg-[#FDFDFD] px-2 w-full md:w-auto">
-              <div className="w-24 h-24 rounded-[2rem] bg-orange-50 flex items-center justify-center text-orange-500 mb-6 shadow-sm border border-orange-100">
-                <Leaf size={40} />
-              </div>
-              <h4 className="font-serif font-bold text-xl mb-3">People in Need</h4>
-              <p className="text-gray-600 text-sm max-w-[200px]">Every day, someone needs support.</p>
-            </div>
-
-            <div className="relative z-10 flex flex-col items-center text-center flex-1 bg-[#FDFDFD] px-2 w-full md:w-auto">
-              <div className="w-24 h-24 rounded-[2rem] bg-indigo-50 flex items-center justify-center text-indigo-500 mb-6 shadow-sm border border-indigo-100">
-                <Handshake size={40} />
-              </div>
-              <h4 className="font-serif font-bold text-xl mb-3">The Connecting Link</h4>
-              <p className="text-gray-600 text-sm max-w-[200px]">We bridge the gap and bring people together.</p>
-            </div>
-
-            <div className="relative z-10 flex flex-col items-center text-center flex-1 bg-[#FDFDFD] px-2 w-full md:w-auto">
-              <div className="w-24 h-24 rounded-[2rem] bg-green-50 flex items-center justify-center text-green-500 mb-6 shadow-sm border border-green-100">
-                <Users size={40} />
-              </div>
-              <h4 className="font-serif font-bold text-xl mb-3">People Who Can Help</h4>
-              <p className="text-gray-600 text-sm max-w-[200px]">Volunteers, donors, partners step in.</p>
-            </div>
+            {pillars.map((pillar: any, idx: number) => {
+              const IconComponent = iconMap[pillar.icon] || HeartHandshake;
+              return (
+                <div key={idx} className="relative z-10 flex flex-col items-center text-center flex-1 bg-[#FDFDFD] px-2 w-full md:w-auto">
+                  <div className={`w-24 h-24 rounded-[2rem] ${pillar.bgColor} flex items-center justify-center ${pillar.iconColor} mb-6 shadow-sm border ${pillar.borderColor || 'border-gray-100'}`}>
+                    <IconComponent size={40} />
+                  </div>
+                  <h4 className="font-serif font-bold text-xl mb-3">{pillar.title}</h4>
+                  <p className="text-gray-600 text-sm max-w-[200px]">{pillar.description}</p>
+                </div>
+              );
+            })}
           </div>
 
           <div className="lg:w-1/3 text-center lg:text-left">
             <p className="text-gray-700 text-lg md:text-xl leading-relaxed mb-6">
               We don&apos;t just run initiatives.<br className="hidden lg:block"/> 
-              We connect hearts, resources and opportunities to create lasting change.
+              {data?.description || 'We connect hearts, resources and opportunities to create lasting change.'}
             </p>
             <Link href="/about" className="inline-flex items-center gap-2 font-bold text-brand-dark hover:opacity-80 transition-opacity pb-1 border-b-2 border-brand-dark">
-              Know more about us <ArrowRight size={18} />
+              {data?.linkText || 'Know more about us'} <ArrowRight size={18} />
             </Link>
           </div>
         </div>
@@ -121,23 +125,23 @@ function WhatIs() {
   );
 }
 
-function HowItWorks() {
-  const steps = [
-    { step: '01', title: 'A Need Exists', desc: 'A community or individual faces a challenge.', Icon: Users },
-    { step: '02', title: 'We Connect', desc: 'We find the right people and resources.', Icon: Search },
-    { step: '03', title: 'Together We Act', desc: 'Volunteers and partners come together to help.', Icon: Handshake },
-    { step: '04', title: 'Lives Improve', desc: 'Real impact. Stronger communities.', Icon: Heart },
-  ];
+function HowItWorks({ data }: { data: any }) {
+  const steps = (data?.steps || []).map((s: any) => ({
+    step: s.step,
+    title: s.title,
+    desc: s.description,
+    Icon: iconMap[s.icon] || Heart,
+  }));
 
   return (
     <section className="py-20 bg-white border-t border-gray-100 px-6">
       <div className="max-w-7xl mx-auto">
-        <h2 className="text-center font-serif text-3xl md:text-4xl font-bold mb-16">How It Works</h2>
+        <h2 className="text-center font-serif text-3xl md:text-4xl font-bold mb-16">{data?.title || 'How It Works'}</h2>
         
         <div className="relative mt-8 max-w-5xl mx-auto flex flex-col md:flex-row justify-between gap-12 md:gap-4">
           <div className="hidden md:block absolute top-[3rem] left-16 right-16 border-t-[3px] border-dashed border-gray-200 z-0" />
           
-          {steps.map((item, idx) => (
+          {steps.map((item: any, idx: number) => (
             <div key={idx} className="relative z-10 flex flex-col items-center text-center flex-1 bg-white px-2">
               <div className="relative flex justify-center mb-6">
                  <div className="w-9 h-9 rounded-full bg-brand-dark text-white flex items-center justify-center text-sm font-bold absolute -top-4 -left-4 shadow-lg border-[3px] border-white z-20">
@@ -157,15 +161,15 @@ function HowItWorks() {
   );
 }
 
-async function Initiatives() {
+async function Initiatives({ title }: { title?: string }) {
   const payload = await getPayload({ config: configPromise });
   const { docs: fetchedInitiatives } = await payload.find({ collection: 'initiatives' });
   const initiatives = fetchedInitiatives.map((item: any) => {
     let Icon = HeartHandshake;
-    if (item.icon === 'utensils') Icon = Utensils;
-    else if (item.icon === 'shield') Icon = Shield;
-    else if (item.icon === 'leaf') Icon = Leaf;
-    else if (item.icon === 'bookopen') Icon = BookOpen;
+    if (item.icon === 'Utensils') Icon = Utensils;
+    else if (item.icon === 'Shield') Icon = Shield;
+    else if (item.icon === 'Leaf') Icon = Leaf;
+    else if (item.icon === 'BookOpen') Icon = BookOpen;
 
     let colorClass = 'text-brand-dark';
     let bgClass = 'bg-gray-100';
@@ -188,7 +192,7 @@ async function Initiatives() {
     <section className="py-20 bg-[#F8F9FA] px-6">
       <div className="max-w-7xl mx-auto">
         <div className="flex flex-col sm:flex-row items-center justify-between mb-12 gap-4">
-          <h2 className="font-serif text-3xl md:text-4xl font-bold">Our Initiatives</h2>
+          <h2 className="font-serif text-3xl md:text-4xl font-bold">{title || 'Our Initiatives'}</h2>
           <Link href="/initiatives" className="font-bold text-brand-dark flex items-center gap-2 hover:opacity-80">
             View all initiatives <ArrowRight size={18} />
           </Link>
@@ -213,26 +217,31 @@ async function Initiatives() {
   );
 }
 
-function Impact() {
-  const stats = [
-    { num: '18,450+', label: 'Meals Shared', Icon: Utensils },
-    { num: '3,250+', label: 'People Helped', Icon: HeartHandshake },
-    { num: '1,10,000+', label: 'Volunteer Hours', Icon: Handshake },
-    { num: '2,150+', label: 'Trees Planted', Icon: Leaf },
-  ];
+async function Impact({ data }: { data: any }) {
+  const payload = await getPayload({ config: configPromise });
+  const { docs: fetchedMetrics } = await payload.find({ 
+    collection: 'metrics', 
+    where: { page: { equals: 'home' } },
+    sort: 'order',
+  });
+
+  const stats = fetchedMetrics.map((m: any) => {
+    const IconComponent = iconMap[m.icon] || HeartHandshake;
+    return { num: m.value, label: m.label, Icon: IconComponent };
+  });
 
   return (
     <section className="bg-brand-dark text-white py-20 px-6">
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-16">
           <h2 className="font-serif text-3xl md:text-4xl font-bold inline-block relative">
-            Our Impact So Far
+            {data?.title || 'Our Impact So Far'}
             <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 w-24 h-1 bg-blue-500 rounded-full" />
           </h2>
         </div>
         
         <div className="grid grid-cols-2 md:grid-cols-4 gap-x-4 gap-y-10 text-center">
-          {stats.map((stat, idx) => (
+          {stats.map((stat: any, idx: number) => (
             <div key={idx} className="flex flex-col items-center">
               <div className="text-gray-300 mb-4 opacity-80">
                 <stat.Icon size={40} strokeWidth={1.5} />
@@ -244,8 +253,8 @@ function Impact() {
         </div>
         
         <div className="mt-16 text-center">
-          <Link href="/impact" className="inline-flex items-center gap-2 border border-white/30 text-white hover:bg-white hover:text-brand-dark px-8 py-3 rounded-full font-bold transition-all">
-            View detailed report <ArrowRight size={18} />
+          <Link href={data?.ctaUrl || '/impact'} className="inline-flex items-center gap-2 border border-white/30 text-white hover:bg-white hover:text-brand-dark px-8 py-3 rounded-full font-bold transition-all">
+            {data?.ctaLabel || 'View detailed report'} <ArrowRight size={18} />
           </Link>
         </div>
       </div>
@@ -253,9 +262,9 @@ function Impact() {
   );
 }
 
-async function Stories() {
+async function Stories({ title }: { title?: string }) {
   const payload = await getPayload({ config: configPromise });
-  const { docs: fetchedStories } = await payload.find({ collection: 'stories' });
+  const { docs: fetchedStories } = await payload.find({ collection: 'stories', limit: 4 });
   const stories = fetchedStories.map((story: any) => {
     const initTitle = story.initiative?.title || 'Story';
     const initColor = story.initiative?.themeColor || 'blue';
@@ -266,7 +275,7 @@ async function Stories() {
     else if (initColor === 'green') tagColor = 'bg-green-500';
 
     return {
-      img: story.featuredImage?.url || 'https://picsum.photos/seed/meal1/600/400',
+      img: story.featuredImage?.url || story.imageUrl || 'https://picsum.photos/seed/meal1/600/400',
       tag: initTitle,
       tagColor,
       title: story.title,
@@ -279,7 +288,7 @@ async function Stories() {
     <section className="py-20 bg-white px-6">
       <div className="max-w-7xl mx-auto">
         <div className="flex flex-col sm:flex-row items-center justify-between mb-12 gap-4">
-          <h2 className="font-serif text-3xl md:text-4xl font-bold">Stories That Inspire</h2>
+          <h2 className="font-serif text-3xl md:text-4xl font-bold">{title || 'Stories That Inspire'}</h2>
           <Link href="/stories" className="font-bold text-brand-dark flex items-center gap-2 hover:opacity-80">
             View all stories <ArrowRight size={18} />
           </Link>
@@ -309,7 +318,7 @@ async function Stories() {
   );
 }
 
-async function Events() {
+async function Events({ title }: { title?: string }) {
   const payload = await getPayload({ config: configPromise });
   const { docs: fetchedEvents } = await payload.find({ collection: 'events' });
   const events = fetchedEvents.map((event: any) => {
@@ -317,14 +326,14 @@ async function Events() {
     const dateStr = d.getDate().toString().padStart(2, '0');
     const monthStr = d.toLocaleString('default', { month: 'short' }).toUpperCase();
     const timeStr = d.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
-    const locName = event.location?.name || 'Location TBD';
+    const locName = event.location?.name || event.locationName || 'Location TBD';
     
     let Icon = HeartHandshake;
     const itemIcon = event.initiative?.icon;
-    if (itemIcon === 'utensils') Icon = Utensils;
-    else if (itemIcon === 'shield') Icon = Shield;
-    else if (itemIcon === 'leaf') Icon = Leaf;
-    else if (itemIcon === 'bookopen') Icon = BookOpen;
+    if (itemIcon === 'Utensils') Icon = Utensils;
+    else if (itemIcon === 'Shield') Icon = Shield;
+    else if (itemIcon === 'Leaf') Icon = Leaf;
+    else if (itemIcon === 'BookOpen') Icon = BookOpen;
 
     let iconColor = 'text-brand-dark';
     const itemColor = event.initiative?.themeColor;
@@ -349,7 +358,7 @@ async function Events() {
     <section className="py-20 bg-[#F8F9FA] px-6">
       <div className="max-w-7xl mx-auto">
         <div className="flex flex-col sm:flex-row items-center justify-between mb-12 gap-4">
-          <h2 className="font-serif text-3xl md:text-4xl font-bold">Upcoming Events</h2>
+          <h2 className="font-serif text-3xl md:text-4xl font-bold">{title || 'Upcoming Events'}</h2>
           <Link href="/events" className="font-bold text-brand-dark flex items-center gap-2 hover:opacity-80">
             View all events <ArrowRight size={18} />
           </Link>
@@ -387,18 +396,18 @@ async function Events() {
   );
 }
 
-async function FAQ() {
+async function FAQ({ data }: { data: any }) {
   const payload = await getPayload({ config: configPromise });
-  const { docs: fetchedFaqs } = await payload.find({ collection: 'faqs' });
+  const { docs: fetchedFaqs } = await payload.find({ collection: 'faqs', sort: 'order' });
   const faqs = fetchedFaqs.map((faq: any) => ({
     q: faq.question,
-    a: <div dangerouslySetInnerHTML={{ __html: faq.answer_html || faq.answer }} />
+    a: faq.answer,
   }));
   
   if (faqs.length === 0) {
     faqs.push({
       q: 'How can I volunteer?',
-      a: <>You can volunteer by navigating to the <Link href="/get-involved" className="text-brand-dark font-bold hover:underline transition-all">Become A Link</Link> page and filling out our simple application form. We will match your skills with our current initiatives.</>
+      a: 'You can volunteer by navigating to the Become A Link page and filling out our simple application form. We will match your skills with our current initiatives.',
     });
   }
 
@@ -406,8 +415,8 @@ async function FAQ() {
     <section className="py-20 bg-white px-6">
       <div className="max-w-4xl mx-auto">
         <div className="text-center mb-12">
-          <h2 className="font-serif text-3xl md:text-4xl font-bold mb-4">Frequently Asked Questions</h2>
-          <p className="text-gray-600 font-medium">Everything you need to know about getting involved.</p>
+          <h2 className="font-serif text-3xl md:text-4xl font-bold mb-4">{data?.title || 'Frequently Asked Questions'}</h2>
+          <p className="text-gray-600 font-medium">{data?.subtitle || 'Everything you need to know about getting involved.'}</p>
         </div>
         <div className="flex flex-col gap-6">
           {faqs.map((faq, idx) => (
@@ -422,29 +431,29 @@ async function FAQ() {
   );
 }
 
-function CtaSection() {
+function CtaSection({ data }: { data: any }) {
   return (
     <section className="py-20 bg-white px-6 border-b border-gray-100">
       <div className="max-w-7xl mx-auto flex flex-col xl:flex-row items-center gap-12 xl:gap-8 justify-between">
         <div className="text-center xl:text-left">
-          <h2 className="font-serif text-3xl md:text-4xl font-bold mb-4">You can be the link.</h2>
-          <p className="text-gray-600 text-lg">Every act of kindness creates a<br className="hidden md:block" /> connection that changes lives.</p>
+          <h2 className="font-serif text-3xl md:text-4xl font-bold mb-4">{data?.headline || 'You can be the link.'}</h2>
+          <p className="text-gray-600 text-lg">{data?.subtext || 'Every act of kindness creates a connection that changes lives.'}</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full xl:w-1/2">
-          <Link href="/get-involved" className="flex items-center gap-5 p-6 rounded-2xl bg-green-50 border border-green-100 hover:shadow-[0_2px_5px_rgb(0,0,0,0.02)] hover:-translate-y-1 transition-all duration-300 ease-in-out group">
+          <Link href={data?.card1?.url || '/get-involved'} className="flex items-center gap-5 p-6 rounded-2xl bg-green-50 border border-green-100 hover:shadow-[0_2px_5px_rgb(0,0,0,0.02)] hover:-translate-y-1 transition-all duration-300 ease-in-out group">
             <div className="text-green-500"><HeartHandshake size={40} strokeWidth={1.5} /></div>
             <div>
-              <h4 className="font-bold font-serif text-gray-900 text-xl mb-1 group-hover:text-green-600 transition-colors duration-300 ease-in-out">I Want To Help</h4>
-              <p className="text-sm font-medium text-gray-600 flex items-center gap-2">Volunteer your time <ArrowRight size={14} className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 ease-in-out" /></p>
+              <h4 className="font-bold font-serif text-gray-900 text-xl mb-1 group-hover:text-green-600 transition-colors duration-300 ease-in-out">{data?.card1?.title || 'I Want To Help'}</h4>
+              <p className="text-sm font-medium text-gray-600 flex items-center gap-2">{data?.card1?.subtitle || 'Volunteer your time'} <ArrowRight size={14} className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 ease-in-out" /></p>
             </div>
           </Link>
 
-          <Link href="/get-involved" className="flex items-center gap-5 p-6 rounded-2xl bg-blue-50 border border-blue-100 hover:shadow-[0_2px_5px_rgb(0,0,0,0.02)] hover:-translate-y-1 transition-all duration-300 ease-in-out group">
+          <Link href={data?.card2?.url || '/get-involved'} className="flex items-center gap-5 p-6 rounded-2xl bg-blue-50 border border-blue-100 hover:shadow-[0_2px_5px_rgb(0,0,0,0.02)] hover:-translate-y-1 transition-all duration-300 ease-in-out group">
             <div className="text-blue-500"><Handshake size={40} strokeWidth={1.5} /></div>
             <div>
-              <h4 className="font-bold font-serif text-gray-900 text-xl mb-1 group-hover:text-blue-600 transition-colors duration-300 ease-in-out">I Want To Partner</h4>
-              <p className="text-sm font-medium text-gray-600 flex items-center gap-2">Let&apos;s collaborate <ArrowRight size={14} className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 ease-in-out" /></p>
+              <h4 className="font-bold font-serif text-gray-900 text-xl mb-1 group-hover:text-blue-600 transition-colors duration-300 ease-in-out">{data?.card2?.title || 'I Want To Partner'}</h4>
+              <p className="text-sm font-medium text-gray-600 flex items-center gap-2">{data?.card2?.subtitle || "Let's collaborate"} <ArrowRight size={14} className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 ease-in-out" /></p>
             </div>
           </Link>
         </div>

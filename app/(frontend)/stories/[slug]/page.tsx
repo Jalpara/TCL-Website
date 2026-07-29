@@ -6,14 +6,15 @@ import { ArrowLeft, ArrowRight } from 'lucide-react';
 import { getPayload } from 'payload';
 import configPromise from '@/payload.config';
 
-export default async function StoryDetailPage({ params }: { params: { slug: string } }) {
+export default async function StoryDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const payload = await getPayload({ config: configPromise });
+  const resolvedParams = await params;
 
   const { docs } = await payload.find({
     collection: 'stories',
     where: {
       slug: {
-        equals: params.slug,
+        equals: resolvedParams.slug,
       },
     },
   });
