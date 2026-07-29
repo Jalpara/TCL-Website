@@ -33,7 +33,6 @@ export const Stories: CollectionConfig = {
       name: 'featuredImage',
       type: 'upload',
       relationTo: 'media',
-      required: true,
     },
     {
       name: 'initiative',

@@ -5,6 +5,8 @@ import {
   ArrowRight, ChevronDown, Leaf, Users, Handshake, Heart, Search, Utensils,
   BookOpen, HeartHandshake, Clock, TreePine, Bookmark, Building, Map as MapIcon, Play, MapPin, Shield
 } from 'lucide-react';
+import { getPayload } from 'payload';
+import configPromise from '@/payload.config';
 
 export default function Page() {
   return (
@@ -155,13 +157,32 @@ function HowItWorks() {
   );
 }
 
-function Initiatives() {
-  const initiatives = [
-    { title: 'The Shared Plate', desc: 'Sharing food. Strengthening communities.', Icon: Utensils, colorClass: 'text-orange-500', bgClass: 'bg-orange-50' },
-    { title: 'The Better Choice', desc: 'Supporting healthier choices, stronger futures.', Icon: Shield, colorClass: 'text-purple-500', bgClass: 'bg-purple-50' },
-    { title: 'The Common Ground', desc: "This planet is our common ground, We're taking care of it", Icon: Leaf, colorClass: 'text-green-500', bgClass: 'bg-green-50' },
-    { title: 'The Learning Circle', desc: 'Creating pathways through knowledge.', Icon: BookOpen, colorClass: 'text-blue-500', bgClass: 'bg-blue-50' },
-  ];
+async function Initiatives() {
+  const payload = await getPayload({ config: configPromise });
+  const { docs: fetchedInitiatives } = await payload.find({ collection: 'initiatives' });
+  const initiatives = fetchedInitiatives.map((item: any) => {
+    let Icon = HeartHandshake;
+    if (item.icon === 'utensils') Icon = Utensils;
+    else if (item.icon === 'shield') Icon = Shield;
+    else if (item.icon === 'leaf') Icon = Leaf;
+    else if (item.icon === 'bookopen') Icon = BookOpen;
+
+    let colorClass = 'text-brand-dark';
+    let bgClass = 'bg-gray-100';
+    if (item.themeColor === 'orange') { colorClass = 'text-orange-500'; bgClass = 'bg-orange-50'; }
+    else if (item.themeColor === 'purple') { colorClass = 'text-purple-500'; bgClass = 'bg-purple-50'; }
+    else if (item.themeColor === 'green') { colorClass = 'text-green-500'; bgClass = 'bg-green-50'; }
+    else if (item.themeColor === 'blue') { colorClass = 'text-blue-500'; bgClass = 'bg-blue-50'; }
+
+    return {
+      title: item.title,
+      desc: item.shortDescription || 'A great initiative.',
+      Icon,
+      colorClass,
+      bgClass,
+      slug: item.slug
+    };
+  });
 
   return (
     <section className="py-20 bg-[#F8F9FA] px-6">
@@ -181,7 +202,7 @@ function Initiatives() {
               </div>
               <h4 className="font-bold font-serif text-xl mb-3 text-gray-900">{item.title}</h4>
               <p className="text-gray-500 text-sm leading-relaxed mb-6 flex-1 font-medium">{item.desc}</p>
-              <Link href="/initiatives/1" className="font-bold text-sm text-gray-800 flex items-center gap-1 hover:text-brand-dark transition-colors border-b border-transparent hover:border-brand-dark pb-0.5">
+              <Link href={`/initiatives/${item.slug}`} className="font-bold text-sm text-gray-800 flex items-center gap-1 hover:text-brand-dark transition-colors border-b border-transparent hover:border-brand-dark pb-0.5">
                 Explore <ArrowRight size={14} />
               </Link>
             </div>
@@ -232,33 +253,27 @@ function Impact() {
   );
 }
 
-function Stories() {
-  const stories = [
-    {
-      img: 'https://picsum.photos/seed/meal1/600/400',
-      tag: 'The Shared Plate', tagColor: 'bg-orange-500',
-      title: 'A warm meal, a brighter day',
-      desc: 'How a simple meal brought smiles to a community.'
-    },
-    {
-      img: 'https://picsum.photos/seed/quiet1/600/400',
-      tag: 'The Better Choice', tagColor: 'bg-purple-500',
-      title: 'From silence to strength',
-      desc: 'A story of healing, hope and fighting addiction.'
-    },
-    {
-      img: 'https://picsum.photos/seed/earth1/600/400',
-      tag: 'The Common Ground', tagColor: 'bg-green-500',
-      title: 'Planting a greener future',
-      desc: 'Students came together to revive their local forest patch.'
-    },
-    {
-      img: 'https://picsum.photos/seed/edu1/600/400',
-      tag: 'The Learning Circle', tagColor: 'bg-blue-500',
-      title: 'Education changes everything',
-      desc: 'Supporting a child today to build a better tomorrow.'
-    },
-  ];
+async function Stories() {
+  const payload = await getPayload({ config: configPromise });
+  const { docs: fetchedStories } = await payload.find({ collection: 'stories' });
+  const stories = fetchedStories.map((story: any) => {
+    const initTitle = story.initiative?.title || 'Story';
+    const initColor = story.initiative?.themeColor || 'blue';
+    
+    let tagColor = 'bg-blue-500';
+    if (initColor === 'orange') tagColor = 'bg-orange-500';
+    else if (initColor === 'purple') tagColor = 'bg-purple-500';
+    else if (initColor === 'green') tagColor = 'bg-green-500';
+
+    return {
+      img: story.featuredImage?.url || 'https://picsum.photos/seed/meal1/600/400',
+      tag: initTitle,
+      tagColor,
+      title: story.title,
+      slug: story.slug,
+      desc: story.summary || 'A beautiful story of impact.'
+    };
+  });
 
   return (
     <section className="py-20 bg-white px-6">
@@ -282,7 +297,7 @@ function Stories() {
                 </span>
                 <h4 className="font-serif font-bold text-xl mb-3 text-gray-900 leading-tight">{story.title}</h4>
                 <p className="text-gray-500 text-sm leading-relaxed mb-6 flex-1">{story.desc}</p>
-                <Link href="/stories/1" className="font-bold text-sm text-brand-dark flex items-center gap-1 hover:opacity-80">
+                <Link href={`/stories/${story.slug}`} className="font-bold text-sm text-brand-dark flex items-center gap-1 hover:opacity-80">
                   Read more <ArrowRight size={14} />
                 </Link>
               </div>
@@ -294,13 +309,41 @@ function Stories() {
   );
 }
 
-function Events() {
-  const events = [
-    { date: '25', month: 'MAY', title: 'Food Drive', loc: 'Navi Mumbai', time: '10:00 AM', Icon: Utensils, iconColor: 'text-orange-500' },
-    { date: '08', month: 'JUN', title: 'Addiction Awareness', loc: 'Navi Mumbai', time: '6:00 PM', Icon: Shield, iconColor: 'text-purple-500' },
-    { date: '15', month: 'JUN', title: 'Beach Cleanup Drive', loc: 'Juhu Beach', time: '7:00 AM', Icon: Leaf, iconColor: 'text-green-500' },
-    { date: '22', month: 'JUN', title: 'Literacy Camp', loc: 'Nerul, Navi Mumbai', time: '9:00 AM', Icon: BookOpen, iconColor: 'text-blue-500' },
-  ];
+async function Events() {
+  const payload = await getPayload({ config: configPromise });
+  const { docs: fetchedEvents } = await payload.find({ collection: 'events' });
+  const events = fetchedEvents.map((event: any) => {
+    const d = new Date(event.startDate);
+    const dateStr = d.getDate().toString().padStart(2, '0');
+    const monthStr = d.toLocaleString('default', { month: 'short' }).toUpperCase();
+    const timeStr = d.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+    const locName = event.location?.name || 'Location TBD';
+    
+    let Icon = HeartHandshake;
+    const itemIcon = event.initiative?.icon;
+    if (itemIcon === 'utensils') Icon = Utensils;
+    else if (itemIcon === 'shield') Icon = Shield;
+    else if (itemIcon === 'leaf') Icon = Leaf;
+    else if (itemIcon === 'bookopen') Icon = BookOpen;
+
+    let iconColor = 'text-brand-dark';
+    const itemColor = event.initiative?.themeColor;
+    if (itemColor === 'orange') iconColor = 'text-orange-500';
+    else if (itemColor === 'purple') iconColor = 'text-purple-500';
+    else if (itemColor === 'green') iconColor = 'text-green-500';
+    else if (itemColor === 'blue') iconColor = 'text-blue-500';
+
+    return {
+      date: dateStr,
+      month: monthStr,
+      title: event.title,
+      loc: locName,
+      time: timeStr,
+      Icon,
+      iconColor,
+      slug: event.slug
+    };
+  });
 
   return (
     <section className="py-20 bg-[#F8F9FA] px-6">
@@ -332,7 +375,7 @@ function Events() {
                     <Clock size={12} className="text-gray-400" /> {event.time}
                   </div>
                 </div>
-                <Link href="/events/1" className="text-xs font-bold flex items-center text-brand-dark hover:opacity-80 transition-opacity">
+                <Link href={`/events/${event.slug}`} className="text-xs font-bold flex items-center text-brand-dark hover:opacity-80 transition-opacity">
                   Join us <ArrowRight size={14} className="ml-1" />
                 </Link>
               </div>
@@ -344,21 +387,20 @@ function Events() {
   );
 }
 
-function FAQ() {
-  const faqs = [
-    {
+async function FAQ() {
+  const payload = await getPayload({ config: configPromise });
+  const { docs: fetchedFaqs } = await payload.find({ collection: 'faqs' });
+  const faqs = fetchedFaqs.map((faq: any) => ({
+    q: faq.question,
+    a: <div dangerouslySetInnerHTML={{ __html: faq.answer_html || faq.answer }} />
+  }));
+  
+  if (faqs.length === 0) {
+    faqs.push({
       q: 'How can I volunteer?',
       a: <>You can volunteer by navigating to the <Link href="/get-involved" className="text-brand-dark font-bold hover:underline transition-all">Become A Link</Link> page and filling out our simple application form. We will match your skills with our current initiatives.</>
-    },
-    {
-      q: 'Where do you operate?',
-      a: 'We currently operate across Navi Mumbai, with various events ranging from food drives to beach cleanups happening every week.'
-    },
-    {
-      q: 'Are donations accepted?',
-      a: 'Currently, we focus on time and skill donations. We believe active participation creates the most profound impact in our communities.'
-    }
-  ];
+    });
+  }
 
   return (
     <section className="py-20 bg-white px-6">

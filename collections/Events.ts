@@ -33,7 +33,6 @@ export const Events: CollectionConfig = {
       name: 'location',
       type: 'relationship',
       relationTo: 'locations',
-      required: true,
     },
     {
       name: 'initiative',

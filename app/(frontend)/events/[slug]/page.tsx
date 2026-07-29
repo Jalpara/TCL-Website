@@ -1,21 +1,40 @@
-'use client';
 import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { notFound } from 'next/navigation';
 import { ArrowLeft, CalendarPlus, MapPin, Clock, Users, ArrowRight } from 'lucide-react';
+import { getPayload } from 'payload';
+import configPromise from '@/payload.config';
 
-export default function EventDetailPage() {
-  const event = {
-    title: 'The Shared Plate - Food Drive',
-    date: 'Saturday, July 25, 2026',
-    time: '10:00 AM - 2:00 PM',
-    loc: 'Central Community Hall, Navi Mumbai',
-    desc: 'Join us for our monthly food drive under "The Shared Plate" initiative. We will be cooking and distributing fresh, nutritious meals to over 500 people in need. Volunteers are required for cooking, packing, and distribution. No prior cooking experience is necessary, just a willingness to help.',
-    startDate: '20260725T043000Z', 
-    endDate: '20260725T083000Z'
-  };
+export default async function EventDetailPage({ params }: { params: { slug: string } }) {
+  const payload = await getPayload({ config: configPromise });
 
-  const gcalLink = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(event.title)}&dates=${event.startDate}/${event.endDate}&details=${encodeURIComponent(event.desc)}&location=${encodeURIComponent(event.loc)}`;
+  const { docs } = await payload.find({
+    collection: 'events',
+    where: {
+      slug: {
+        equals: params.slug,
+      },
+    },
+  });
+
+  const event = docs[0] as any;
+
+  if (!event) {
+    return notFound();
+  }
+
+  // Format date and time
+  const d = new Date(event.startDate);
+  const formattedDate = d.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+  const formattedTime = d.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+  const locationName = event.location?.name || 'Location TBD';
+
+  // For GCal
+  const endD = event.endDate ? new Date(event.endDate) : new Date(d.getTime() + 4 * 60 * 60 * 1000); // add 4 hrs fallback
+  const startStr = d.toISOString().replace(/-|:|\.\d\d\d/g, '');
+  const endStr = endD.toISOString().replace(/-|:|\.\d\d\d/g, '');
+  const gcalLink = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(event.title)}&dates=${startStr}/${endStr}&details=${encodeURIComponent(event.summary || '')}&location=${encodeURIComponent(locationName)}`;
 
   return (
     <div className="py-12 px-6">
@@ -37,28 +56,32 @@ export default function EventDetailPage() {
                     <div className="w-12 h-12 bg-white text-brand-dark rounded-xl flex items-center justify-center shadow-sm"><Clock size={24} /></div>
                     <div>
                       <h4 className="font-bold text-gray-900 mb-1">Date & Time</h4>
-                      <p className="text-sm font-medium text-gray-600 leading-relaxed">{event.date}<br/>{event.time}</p>
+                      <p className="text-sm font-medium text-gray-600 leading-relaxed">{formattedDate}<br/>{formattedTime}</p>
                     </div>
                  </div>
                  <div className="flex flex-col gap-4 bg-gray-50 p-6 rounded-2xl border border-gray-100">
                     <div className="w-12 h-12 bg-white text-green-600 rounded-xl flex items-center justify-center shadow-sm"><MapPin size={24} /></div>
                     <div>
                       <h4 className="font-bold text-gray-900 mb-1">Location</h4>
-                      <p className="text-sm font-medium text-gray-600 leading-relaxed">{event.loc}</p>
+                      <p className="text-sm font-medium text-gray-600 leading-relaxed">{locationName}</p>
                     </div>
                  </div>
                  <div className="flex flex-col gap-4 bg-gray-50 p-6 rounded-2xl border border-gray-100">
                     <div className="w-12 h-12 bg-white text-orange-500 rounded-xl flex items-center justify-center shadow-sm"><Users size={24} /></div>
                     <div>
                       <h4 className="font-bold text-gray-900 mb-1">Capacity</h4>
-                      <p className="text-sm font-medium text-gray-600 leading-relaxed">50 Volunteers Needed</p>
+                      <p className="text-sm font-medium text-gray-600 leading-relaxed">Volunteers Needed</p>
                     </div>
                  </div>
               </div>
 
               <div className="prose prose-lg text-gray-600 mb-12 max-w-none">
                 <h3 className="font-serif font-bold text-2xl text-gray-900 mb-4">About this Event</h3>
-                <p className="font-medium leading-relaxed">{event.desc}</p>
+                {event.description_html ? (
+                  <div dangerouslySetInnerHTML={{ __html: event.description_html }} />
+                ) : (
+                  <p className="font-medium leading-relaxed">{event.summary || 'Details coming soon...'}</p>
+                )}
               </div>
 
               <div className="flex flex-col sm:flex-row gap-4 border-t border-gray-100 pt-8">
