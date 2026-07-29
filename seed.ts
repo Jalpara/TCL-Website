@@ -26,6 +26,23 @@ export const seed = async () => {
       icon: 'Utensils',
       themeColor: 'orange',
       imageUrl: 'https://picsum.photos/seed/food1/600/400',
+      challenge: 'Every day, tons of perfectly good food go to waste while millions face food insecurity. This disconnect between surplus and scarcity is a logistical and social challenge that demands a community-driven response.',
+      activities: [
+        { title: 'Food Rescue Drives', description: 'Partnering with restaurants and event organizers to collect surplus food daily.' },
+        { title: 'Community Pantries', description: 'Setting up accessible food distribution points in underserved neighborhoods.' },
+        { title: 'Awareness Workshops', description: 'Educating the community about food waste reduction and sustainable habits.' }
+      ],
+      methodology: [
+        { stepNumber: '01', title: 'Need', description: 'Identifying areas and groups facing acute shortages.' },
+        { stepNumber: '02', title: 'Connect', description: 'Linking resources from donors to our distribution hubs.' },
+        { stepNumber: '03', title: 'Act', description: 'Mobilizing volunteers for rapid, efficient delivery.' },
+        { stepNumber: '04', title: 'Impact', description: 'Sustained relief and stronger, resilient communities.' }
+      ],
+      impactNumbers: [
+        { value: '50K+', label: 'Meals Served' },
+        { value: '1,200+', label: 'Volunteers' },
+        { value: '25 Tons', label: 'Food Rescued' }
+      ]
     },
     {
       title: 'The Better Choice',
@@ -36,6 +53,23 @@ export const seed = async () => {
       icon: 'Shield',
       themeColor: 'purple',
       imageUrl: 'https://picsum.photos/seed/addict1/600/400',
+      challenge: 'Addiction destroys families and communities, but recovery is possible with the right support system.',
+      activities: [
+        { title: 'Support Groups', description: 'Weekly confidential meetings for individuals on their recovery journey.' },
+        { title: 'Counseling', description: 'Professional psychological support and rehabilitation guidance.' },
+        { title: 'Awareness Camps', description: 'Educating youth about the dangers of substance abuse.' }
+      ],
+      methodology: [
+        { stepNumber: '01', title: 'Identify', description: 'Reaching out to those who need help the most.' },
+        { stepNumber: '02', title: 'Support', description: 'Providing a safe space and medical assistance.' },
+        { stepNumber: '03', title: 'Rehab', description: 'Structured recovery and counseling programs.' },
+        { stepNumber: '04', title: 'Thrive', description: 'Helping individuals reintegrate into society.' }
+      ],
+      impactNumbers: [
+        { value: '5K+', label: 'Lives Changed' },
+        { value: '200+', label: 'Support Groups' },
+        { value: '15+', label: 'Rehab Centers' }
+      ]
     },
     {
       title: 'The Common Ground',
@@ -46,6 +80,23 @@ export const seed = async () => {
       icon: 'Leaf',
       themeColor: 'green',
       imageUrl: 'https://picsum.photos/seed/earth1/600/400',
+      challenge: 'Climate change and environmental degradation are accelerating, threatening biodiversity and our future.',
+      activities: [
+        { title: 'Tree Plantations', description: 'Organizing massive tree planting events across the city.' },
+        { title: 'Beach Cleanups', description: 'Weekly coastal cleanup drives to remove plastic waste.' },
+        { title: 'Eco Workshops', description: 'Teaching sustainable living practices to school children.' }
+      ],
+      methodology: [
+        { stepNumber: '01', title: 'Educate', description: 'Raising awareness about environmental issues.' },
+        { stepNumber: '02', title: 'Act', description: 'Organizing community-driven conservation drives.' },
+        { stepNumber: '03', title: 'Nurture', description: 'Ensuring the survival of planted trees.' },
+        { stepNumber: '04', title: 'Protect', description: 'Advocating for better environmental policies.' }
+      ],
+      impactNumbers: [
+        { value: '10K+', label: 'Trees Planted' },
+        { value: '50+', label: 'Cleanup Drives' },
+        { value: '5 Tons', label: 'Plastic Removed' }
+      ]
     },
     {
       title: 'The Learning Circle',
@@ -56,6 +107,23 @@ export const seed = async () => {
       icon: 'BookOpen',
       themeColor: 'blue',
       imageUrl: 'https://picsum.photos/seed/edu2/600/400',
+      challenge: 'Millions of children lack access to quality education, trapping them in a cycle of poverty.',
+      activities: [
+        { title: 'After-School Programs', description: 'Tutoring and mentoring for underprivileged students.' },
+        { title: 'Library Setup', description: 'Building community libraries in remote villages.' },
+        { title: 'Digital Literacy', description: 'Teaching basic computer skills to young adults.' }
+      ],
+      methodology: [
+        { stepNumber: '01', title: 'Assess', description: 'Identifying educational gaps in communities.' },
+        { stepNumber: '02', title: 'Equip', description: 'Providing books, supplies, and digital tools.' },
+        { stepNumber: '03', title: 'Teach', description: 'Deploying volunteer teachers and mentors.' },
+        { stepNumber: '04', title: 'Empower', description: 'Enabling self-reliance through knowledge.' }
+      ],
+      impactNumbers: [
+        { value: '2K+', label: 'Students Reached' },
+        { value: '10+', label: 'Libraries Built' },
+        { value: '500+', label: 'Mentors' }
+      ]
     },
   ];
 
@@ -153,8 +221,22 @@ export const seed = async () => {
   // ============================================
   const eventsData = [
     {
-      title: 'Food Drive',
-      slug: 'food-drive',
+      title: 'Weekend Food Drive',
+      slug: 'weekend-food-drive-1',
+      startDate: new Date('2026-05-25T10:00:00Z').toISOString(),
+      initiative: createdInitiatives[0].id,
+      locationName: 'Navi Mumbai',
+    },
+    {
+      title: 'Weekend Food Drive',
+      slug: 'weekend-food-drive-2',
+      startDate: new Date('2026-05-25T10:00:00Z').toISOString(),
+      initiative: createdInitiatives[0].id,
+      locationName: 'Navi Mumbai',
+    },
+    {
+      title: 'Weekend Food Drive',
+      slug: 'weekend-food-drive-3',
       startDate: new Date('2026-05-25T10:00:00Z').toISOString(),
       initiative: createdInitiatives[0].id,
       locationName: 'Navi Mumbai',
