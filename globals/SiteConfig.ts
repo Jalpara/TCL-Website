@@ -70,5 +70,14 @@ export const SiteConfig: GlobalConfig = {
         { name: 'url', type: 'text', required: true },
       ],
     },
+    {
+      name: 'headerNavLinks',
+      type: 'array',
+      label: 'Header Navigation Links',
+      fields: [
+        { name: 'label', type: 'text', required: true },
+        { name: 'url', type: 'text', required: true },
+      ],
+    },
   ],
 };

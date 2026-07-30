@@ -14,7 +14,7 @@ export default async function EventsPage() {
     const d = new Date(event.startDate);
     return {
       id: event.id,
-      date: d,
+      date: d.toISOString(),
       title: event.title,
       loc: event.location?.name || event.locationName || 'Location TBD',
       time: d.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),

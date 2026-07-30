@@ -60,6 +60,16 @@ export const Events: CollectionConfig = {
       name: 'capacity',
       type: 'number',
       label: 'Volunteer Capacity',
+    },
+    {
+      name: 'imageUrl',
+      type: 'text',
+      label: 'Cover Image URL',
+    },
+    {
+      name: 'summary',
+      type: 'textarea',
+      label: 'Short Summary',
     }
   ],
 };

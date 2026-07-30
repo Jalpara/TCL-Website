@@ -73,6 +73,15 @@ export interface Config {
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
     'payload-migrations': PayloadMigration;
+    initiatives: any;
+    stories: any;
+    events: any;
+    people: any;
+    locations: any;
+    partners: any;
+    metrics: any;
+    categories: any;
+    faqs: any;
   };
   collectionsJoins: {};
   collectionsSelect: {
@@ -87,8 +96,20 @@ export interface Config {
     defaultIDType: string;
   };
   fallbackLocale: null;
-  globals: {};
-  globalsSelect: {};
+  globals: {
+    'site-config': any;
+    'home-page': any;
+    'about-page': any;
+    'privacy-policy': any;
+    'terms-conditions': any;
+  };
+  globalsSelect: {
+    'site-config': any;
+    'home-page': any;
+    'about-page': any;
+    'privacy-policy': any;
+    'terms-conditions': any;
+  };
   locale: null;
   widgets: {
     collections: CollectionsWidget;
